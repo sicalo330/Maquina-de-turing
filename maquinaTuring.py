@@ -193,6 +193,5 @@ def main():
     else:
         print("Opción no válida. Saliendo...")
         return
-
 if __name__ == "__main__":
     main()
