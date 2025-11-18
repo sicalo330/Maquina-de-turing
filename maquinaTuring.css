@@ -2,16 +2,55 @@ body {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   padding: 2rem;
 }
+
 label, h1 {
   margin-bottom: 0.5rem;
   display: block;
 }
+
 input {
   padding: 0.5rem;
   font-size: 1rem;
 }
+
 button {
   margin-top: 1rem;
   padding: 0.5rem 0.75rem;
   font-size: 1rem;
+  cursor: pointer;
+}
+
+#resultado, #palabra {
+  margin-top: 1rem;
+  font-weight: bold;
+}
+
+#cinta {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  margin-top: 1rem;
+  font-family: monospace;
+}
+
+.celda {
+  border: 1px solid #ddd;
+  padding: 0.4rem 0.6rem;
+  margin: 0.1rem;
+  border-radius: 4px;
+}
+
+.cabezal {
+  background-color: yellow;
+  font-weight: bold;
+}
+
+.valido {
+  color: green;
+}
+
+.invalido {
+  color: red;
 }

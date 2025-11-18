@@ -11,10 +11,18 @@
   <form id="simpleForm" aria-label="Formulario de contraseña">
     <label for="passwordInput">Ingresa tu contraseña:</label>
     <input id="passwordInput" name="password" type="text" placeholder="••••••••" required />
-    <button type="submit">Enviar</button>
+    <button type="submit">Cargar</button>
   </form>
 
   <p id="resultado"></p>
+  <p id="palabra"></p>
+
+  <div id="cintaContainer" style="display:none;">
+    <h3>Cinta:</h3>
+    <div id="cinta"></div>
+    <p id="estado"></p>
+    <button id="btnSiguiente">Siguiente</button>
+  </div>
 
   <script src="maquinaTuring.js"></script>
 </body>

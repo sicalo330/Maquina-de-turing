@@ -1,16 +1,27 @@
-// Máquina de Turing simplificada para validar contraseñas alfanuméricas (≥ 8)
 class TuringMachine {
   constructor(input) {
-    this.tape = input.split("");
-    this.head = 0;
+    const randomLeft = this.generarAleatorio(5);
+    const randomRight = this.generarAleatorio(5);
+    const fullTape = randomLeft + input + randomRight;
+
+    this.tape = fullTape.split("");
+    this.head = randomLeft.length; // Comienza justo al inicio del input
+    this.stateNumber = 0; // Contador de estados
     this.state = "q0";
-    this.acceptState = "HALT";
+    this.acceptState = null; // se define dinámicamente al final
     this.blank = "_";
   }
 
+  generarAleatorio(n) {
+    const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+    let out = "";
+    for (let i = 0; i < n; i++) {
+      out += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return out;
+  }
+
   read() {
-    //this.tape es un array que separa cada caracter, this.head es la posición actual del cabezal
-    //Empieza en 0 y avanza hasta que encuentra un espacio en blanco (this.blank)
     return this.tape[this.head] || this.blank;
   }
 
@@ -20,60 +31,85 @@ class TuringMachine {
 
   step() {
     const symbol = this.read();
-    // return
-    // Solo acepta letras o números
     const isAlphanumeric = /^[a-zA-Z0-9]$/.test(symbol);
 
-    switch (this.state) {
-      case "q0":
-        if (isAlphanumeric) {
-          this.move();
-          this.state = "q0";
-        } else if (symbol === this.blank) {//Entra a este if cuando llega al final de la cadena
-          // Si llegamos al final, verificamos la longitud
-          if (this.tape.length >= 8) {//Si es mayor o igual a 8 acepta la contraseña
-            this.state = this.acceptState;
-          } else {//Si no es mayor o igual a 8 rechaza la contraseña
-            this.state = "REJECT";
-          }
-        } else {//Lleg a a este else cuando encuentra un símbolo no alfanumérico
-          this.state = "REJECT";
+    // Solo continuar si no ha terminado
+    if (this.state !== "REJECT" && !this.acceptState) {
+      if (isAlphanumeric) {
+        this.move();
+        this.stateNumber++;
+        this.state = `q${this.stateNumber}`;
+
+        // Si llega al final de la cinta, genera estado de aceptación dinámico
+        if (this.head >= this.tape.length) {
+          this.acceptState = this.state;
         }
-        break;
+      } else if (symbol === this.blank) {
+        this.acceptState = this.state; // acepta al encontrar blanco al final
+      } else {
+        this.state = "REJECT";
+      }
     }
   }
 
-  run() {
-    while (this.state !== this.acceptState && this.state !== "REJECT") {
-        // console.log(`Estado: ${this.state}, Cabezal: ${this.head}, Símbolo leído: '${this.read()}'`);
-        // return
-      this.step();
-    }
-    return this.state === this.acceptState;
+  isFinished() {
+    return this.acceptState || this.state === "REJECT";
   }
 }
 
-// Enlazamos al formulario
+// Referencias al DOM
 const form = document.getElementById("simpleForm");
 const input = document.getElementById("passwordInput");
 const resultado = document.getElementById("resultado");
+const palabra = document.getElementById("palabra");
+const cintaDiv = document.getElementById("cinta");
+const estado = document.getElementById("estado");
+const cintaContainer = document.getElementById("cintaContainer");
+const btnSiguiente = document.getElementById("btnSiguiente");
+
+let tm = null;
 
 form.addEventListener("submit", (event) => {
-  event.preventDefault();//Hace que la pagina no se recargue al enviar el formulario
-  const valor = input.value;
+  event.preventDefault();
+  const valor = input.value.trim() + "_";
+  if (!valor) return;
 
-  const tm = new TuringMachine(valor);
-  const esValida = tm.run();
+  tm = new TuringMachine(valor);
 
-//   return
+  cintaContainer.style.display = "block";
+  resultado.textContent = "";
+  palabra.textContent = `Cinta generada: ${tm.tape.join("")}`;
+  palabra.style.color = "blue";
 
-  if (esValida) {
-    console.log("Contraseña válida:", valor);
-    resultado.textContent = "✅ Contraseña aceptada";
-    resultado.style.color = "green";
-  } else {
-    console.log("Contraseña inválida:", valor);
+  actualizarVista();
+});
+
+btnSiguiente.addEventListener("click", () => {
+  if (!tm || tm.isFinished()) return;
+
+  tm.step();
+  actualizarVista();
+
+  if (tm.state === "REJECT") {
     resultado.textContent = "❌ Contraseña inválida (debe ser alfanumérica y tener al menos 8 caracteres)";
     resultado.style.color = "red";
+  } else if (tm.acceptState) {
+    resultado.textContent = `✅ Estado de aceptación: ${tm.acceptState}`;
+    resultado.style.color = "green";
   }
 });
+
+function actualizarVista() {
+  cintaDiv.innerHTML = "";
+  tm.tape.forEach((char, index) => {
+    const celda = document.createElement("span");
+    celda.classList.add("celda");
+    celda.textContent = char;
+    if (index === tm.head) {
+      celda.classList.add("cabezal");
+    }
+    cintaDiv.appendChild(celda);
+  });
+
+  estado.textContent = `Estado actual: ${tm.state} | Cabezal en posición ${tm.head} | Símbolo leído: '${tm.read()}'`;
+}
