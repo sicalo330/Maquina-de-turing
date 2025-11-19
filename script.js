@@ -45,7 +45,12 @@ class TuringMachine {
           this.acceptState = this.state;
         }
       } else if (symbol === this.blank) {
-        this.acceptState = this.state; // acepta al encontrar blanco al final
+        if(this.stateNumber >= 8){
+          this.acceptState = this.state; // acepta al encontrar blanco al final
+        }
+        else{
+          this.state = "REJECT";
+        }
       } else {
         this.state = "REJECT";
       }
