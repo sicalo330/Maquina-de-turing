@@ -2,14 +2,15 @@ class TuringMachine {
   constructor(input) {
     const randomLeft = this.generarAleatorio(5);
     const randomRight = this.generarAleatorio(5);
-    const fullTape = randomLeft + input + randomRight;
+
+    this.blank = "_";
+    const fullTape = randomLeft + input + this.blank + randomRight;
 
     this.tape = fullTape.split("");
-    this.head = randomLeft.length; // Comienza justo al inicio del input
-    this.stateNumber = 0; // Contador de estados
+    this.head = randomLeft.length; 
+    this.stateNumber = 0;
     this.state = "q0";
-    this.acceptState = null; // se define dinámicamente al final
-    this.blank = "_";
+    this.acceptState = null;
   }
 
   generarAleatorio(n) {
@@ -33,24 +34,20 @@ class TuringMachine {
     const symbol = this.read();
     const isAlphanumeric = /^[a-zA-Z0-9]$/.test(symbol);
 
-    // Solo continuar si no ha terminado
     if (this.state !== "REJECT" && !this.acceptState) {
+
       if (isAlphanumeric) {
         this.move();
         this.stateNumber++;
         this.state = `q${this.stateNumber}`;
 
-        // Si llega al final de la cinta, genera estado de aceptación dinámico
-        if (this.head >= this.tape.length) {
-          this.acceptState = this.state;
-        }
       } else if (symbol === this.blank) {
-        if(this.stateNumber >= 8){
-          this.acceptState = this.state; // acepta al encontrar blanco al final
-        }
-        else{
+        if (this.stateNumber >= 8) {
+          this.acceptState = this.state; 
+        } else {
           this.state = "REJECT";
         }
+
       } else {
         this.state = "REJECT";
       }
@@ -76,7 +73,7 @@ let tm = null;
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
-  const valor = input.value.trim() + "_";
+  const valor = input.value.trim()
   if (!valor) return;
 
   tm = new TuringMachine(valor);
