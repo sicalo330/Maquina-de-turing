@@ -1,6 +1,5 @@
 # Maquina de Turing
 ## Autor:Noah Esteban Narváez Jung
-### Fase 1
 Este proyecto requiere validar cadenas formadas únicamente por símbolos alfanuméricos, donde la Máquina de Turing debe detectar el final de la palabra mediante un símbolo de blanco _.
 El regex garantiza exactamente ese comportamiento y funciona de la siguiente manera:
 ## Pasos funcionales de la máquina:
